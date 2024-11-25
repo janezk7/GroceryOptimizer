@@ -36,3 +36,65 @@
     transform: rotate(360deg);
   }
 }
+
+/* My styles */
+/* App.css */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  background-color: #333;
+  /* padding: 10px; */
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+}
+
+.tab-link {
+  display: flex;
+  flex: 1;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  font-size: 16px;
+  /* background-color: 'cyan'; */
+}
+
+.tab-link:hover {
+  background-color: #555;
+}
+
+.tab-link:focus {
+  outline: none;
+  background-color: #444;
+}
+
+.tab-link.active {
+  background-color: #444;
+  /* font-weight: bold; */
+}
+
+.tabIcon {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  font-size: x-large
+}
