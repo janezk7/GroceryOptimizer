@@ -11,6 +11,11 @@ import HomeScreen from "./screens/HomeScreen";
 import ShopScreen from "./screens/ShopScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 function TabLink({
   to,
   children,
