@@ -1,5 +1,3 @@
-import React, { CSSProperties } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import {
   BrowserRouter,
@@ -9,33 +7,9 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-
-function HomeScreen() {
-  return (
-    <header className="App-header">
-      <img src={logo} className="App-logo" alt="logo" />
-      <p>
-        Edit <code>src/App.tsx</code> and save to reload.
-      </p>
-      <a
-        className="App-link"
-        href="https://reactjs.org"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Learn React
-      </a>
-    </header>
-  );
-}
-
-function ShopScreen() {
-  return <div style={screenStyle}>Shop Screen</div>;
-}
-
-function ProfileScreen() {
-  return <div style={screenStyle}>Profile Screen</div>;
-}
+import HomeScreen from "./screens/HomeScreen";
+import ShopScreen from "./screens/ShopScreen";
+import ProfileScreen from "./screens/ProfileScreen";
 
 function TabLink({
   to,
@@ -86,8 +60,6 @@ function App() {
   );
 }
 
-const screenStyle: CSSProperties = {
-  backgroundColor: "cyan",
-};
+
 
 export default App;
