@@ -6,10 +6,16 @@
 
 .content {
   flex: 1;
-  /* flex-grow: 1; */
   padding: 20px;
+  overflow: auto; /* This is important for layout to work */
 }
 
+.bottom-navigation {
+  height: 56px;
+  flex-shrink: 0;
+}
+
+/* NOT USED - old solution */
 .tabs {
   display: flex;
   /* justify-content: space-around; */

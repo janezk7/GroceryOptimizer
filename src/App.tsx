@@ -56,7 +56,7 @@ function App() {
         </Routes>
       </div>
 
-      <Box>
+      <Box className="bottom-navigation">
         <BottomNavigation
           showLabels
           value={value}
