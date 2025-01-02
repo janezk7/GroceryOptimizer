@@ -8,9 +8,9 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-import ItemsScreen from "./screens/ItemsScreen";
-import ShopScreen from "./screens/ShopScreen";
-import ProfileScreen from "./screens/ProfileScreen";
+import ItemsScreen from "./screens/(tabs)/ItemsScreen";
+import ShopScreen from "./screens/(tabs)/ShopScreen";
+import ProfileScreen from "./screens/(tabs)/ProfileScreen";
 
 import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
 import FaceIcon from "@mui/icons-material/Face";
