@@ -5,6 +5,7 @@ import { CSSProperties, useEffect, useState } from "react";
 import { Article } from "../../models/DbEntities";
 import { apiService } from "../../services/apiServiceFactory";
 import ArticleCard from "../../components/ArticleCard";
+import { commonStyles } from "../../style";
 
 export default function ItemsScreen() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -30,16 +31,13 @@ export default function ItemsScreen() {
   }, []);
 
   return (
-    <Box sx={customContainer}>
+    <Box sx={commonStyles.screenContainer}>
       <Typography variant="h4" gutterBottom>
         Artikli
       </Typography>
       <Box sx={itemsContainer}>
         {articles && articles.map((a) => <ArticleCard data={a} />)}
       </Box>
-      {/* <div className="items-container">
-        {articles && articles.map((a) => <ArticleCard data={a} />)}
-      </div> */}
       <Fab
         style={{
           position: "fixed",
@@ -55,15 +53,6 @@ export default function ItemsScreen() {
     </Box>
   );
 }
-
-const customContainer: CSSProperties = {
-  display: "flex",
-  flex: 1,
-  justifyContent: "start",
-  alignItems: "stretch",
-  flexDirection: "column",
-  // backgroundColor: 'cyan'
-};
 
 const itemsContainer: CSSProperties = {
   display: "flex",
