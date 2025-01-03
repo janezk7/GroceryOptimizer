@@ -1,24 +1,17 @@
 import { Box, Button, Typography } from "@mui/material";
 import { CSSProperties } from "react";
+import { commonStyles } from "../../style";
 
 export default function ProfileScreen() {
-  return (    <Box sx={container}>
-    <Typography variant="h4" gutterBottom>
-      Profil
-    </Typography>
-    <Box sx={contentContainer}>
+  return (
+    <Box sx={commonStyles.contentContainer}>
+      <Typography variant="h4" gutterBottom>
+        Profil
+      </Typography>
+      <Box sx={contentContainer}></Box>
     </Box>
-  </Box>);
+  );
 }
-
-const container: CSSProperties = {
-  flex: 1,
-  display: "flex",
-  justifyContent: "start",
-  alignItems: "stretch",
-  flexDirection: "column",
-  height: "100%",
-};
 
 const contentContainer: CSSProperties = {
   display: "flex",

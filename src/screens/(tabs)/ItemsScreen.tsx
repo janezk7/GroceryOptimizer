@@ -1,4 +1,4 @@
-import { Box, Fab, Typography } from "@mui/material";
+import { Box, CircularProgress, Fab, Typography } from "@mui/material";
 import logo from "../logo.svg";
 import AddIcon from "@mui/icons-material/Add";
 import { CSSProperties, useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import ArticleCard from "../../components/ArticleCard";
 import { commonStyles } from "../../style";
 
 export default function ItemsScreen() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [articles, setArticles] = useState<Article[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,8 +16,10 @@ export default function ItemsScreen() {
     console.log("Getting articles...");
     const getArticles = async () => {
       try {
+        setIsLoading(true);
         const data = await apiService.fetchArticles();
         setArticles(data);
+        setIsLoading(false);
         console.log("Got data!", data);
       } catch (err: unknown) {
         if (err instanceof Error) {
@@ -31,22 +34,24 @@ export default function ItemsScreen() {
   }, []);
 
   return (
-    <Box sx={commonStyles.screenContainer}>
+    <Box sx={commonStyles.contentContainer}>
       <Typography variant="h4" gutterBottom>
         Artikli
       </Typography>
+      {isLoading && (
+        <Box sx={loadingContainer}>
+          <CircularProgress />
+        </Box>
+      )}
       <Box sx={itemsContainer}>
-        {articles && articles.map((a) => <ArticleCard data={a} />)}
+        {articles &&
+          articles.map((a, index) => <ArticleCard key={index} data={a} />)}
       </Box>
       <Fab
-        style={{
-          position: "fixed",
-          bottom: "100px",
-          right: "30px",
-        }}
+        style={fabStyle}
         color="primary"
         aria-label="add"
-        onClick={() => alert("clicked!")}
+        onClick={() => alert("Clicked")}
       >
         <AddIcon />
       </Fab>
@@ -54,14 +59,27 @@ export default function ItemsScreen() {
   );
 }
 
+const fabStyle: CSSProperties = {
+  position: "fixed",
+  bottom: "80px",
+  right: "30px",
+};
+
+const loadingContainer: CSSProperties = {
+  display: "flex",
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+};
+
 const itemsContainer: CSSProperties = {
   display: "flex",
   flex: 1,
   justifyContent: "flex-start",
   alignItems: "flex-start",
-  alignContent: 'flex-start',
+  alignContent: "flex-start",
   flexDirection: "row",
-  flexWrap: 'wrap',
+  flexWrap: "wrap",
   gap: 1,
   // backgroundColor: 'cyan'
 };
