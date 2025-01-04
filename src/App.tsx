@@ -21,7 +21,7 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { BottomNavigation, BottomNavigationAction, Box } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function TabLink({
   to,
@@ -44,6 +44,11 @@ function TabLink({
 function App() {
   const navigate = useNavigate();
   const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    console.log("Navigating to home.");
+    navigate('./items')
+  }, [])
 
   return (
     <div className="app-container">
