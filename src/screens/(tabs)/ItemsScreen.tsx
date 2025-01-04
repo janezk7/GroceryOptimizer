@@ -43,10 +43,12 @@ export default function ItemsScreen() {
           <CircularProgress />
         </Box>
       )}
-      <Box sx={itemsContainer}>
-        {articles &&
-          articles.map((a, index) => <ArticleCard key={index} data={a} />)}
-      </Box>
+      {!isLoading && (
+        <Box sx={itemsContainer}>
+          {articles &&
+            articles.map((a, index) => <ArticleCard key={index} data={a} />)}
+        </Box>
+      )}
       <Fab
         style={fabStyle}
         color="primary"
