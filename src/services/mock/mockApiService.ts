@@ -21,4 +21,11 @@ export class MockApiService implements IApiService {
     await new Promise((resolve) => setTimeout(resolve, fetchWaitTIme));
     return getMockArticles(20);
   }
+
+  async updateArticleShopPricing(
+    shopId: number,
+    pricePerUnit: number
+  ): Promise<boolean> { 
+    return true;
+  }
 }

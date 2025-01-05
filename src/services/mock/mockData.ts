@@ -15,6 +15,8 @@ function getMockArticles(n: number) {
       addedByUserName: "Janez",
       name: "Mock Article " + (i + 1),
       note: "This is a note for Mock Article " + (i + 1),
+      unitId: 1,
+      priceUnitName: 'kg'
     });
   }
 
@@ -47,7 +49,7 @@ function getMockShops() {
 function getMockArticleShopPricings() {
   let shops = getMockShops();
   let pricings: ArticleShopPricing[] = [];
-  for (let i = 0; i < shops.length; i++) {
+  for (let i = 0; i < shops.length - 1; i++) { // Note: -1 is so we can test adding non-existing shop pricing
     pricings.push({
       articleId: 99,
       shopId: shops[i].id,

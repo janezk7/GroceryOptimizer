@@ -6,8 +6,10 @@ interface User {
 interface Article {
   id: number;
   addedByUserId: number;
+  unitId: number;
 
   addedByUserName: string;
+  priceUnitName: string;
   name: string;
   note: string | undefined;
 }

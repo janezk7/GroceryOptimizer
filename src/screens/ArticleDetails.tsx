@@ -28,15 +28,16 @@ import ArticleShopPricingItem from "../components/ArticleDetails/ArticleShopPric
 
 const ArticleDetails = () => {
   const [article, setArticle] = useState<Article>();
-  const [pricings, setPricings] =
-    useState<{ pricing: ArticleShopPricing; isLowest: boolean }[]>();
+  const [pricings, setPricings] = useState<
+    { pricing: ArticleShopPricing; isLowest: boolean }[]
+  >([]);
   const [shops, setShops] = useState<Shop[]>();
   const [isLoading, setIsLoading] = useState(false);
 
   // New/Update pricing
   const [newPricingSelectedShop, setNewPricingSelectedShop] =
     useState<string>("Shop");
-  const [newPricingPrice, setNewPricingPrice] = useState<number | ''>('');
+  const [newPricingPrice, setNewPricingPrice] = useState<number | "">("");
   const [isPricingForShopExists, setIsPricingForShopExists] =
     useState<boolean>(false);
   const [isFieldsDisabled, setIsFieldsDisabled] = useState<boolean>(true);
@@ -131,23 +132,54 @@ const ArticleDetails = () => {
     setIsPricingForShopExists(false);
   };
 
-  const onAddNewClicked = () => {
+  const onUpdatePricing = async (isNew: boolean) => {
     setIsLoading(true);
     setIsFieldsDisabled(true);
 
-    // TODO: Implement in apiService
-    alert("Feature not implemented yet.");
+    const selectedShop = shops?.find((x) => x.name === newPricingSelectedShop);
+    if (article && selectedShop && newPricingPrice) {
 
-    setIsLoading(false);
-    setIsFieldsDisabled(false);
-  };
+      // Responsive client-side update
+      if (isNew) {
+        setPricings((prevState) => [
+          ...prevState,
+          {
+            isLowest: false,
+            pricing: {
+              articleId: article?.id,
+              pricePerUnit: Number(newPricingPrice),
+              shopId: selectedShop.id,
+              shopName: selectedShop.name,
+              unitName: article.priceUnitName,
+            },
+          },
+        ]);
+      } else {
+        const indexToChange = pricings.findIndex(
+          (x) => x.pricing.shopId === selectedShop.id
+        );
+        setPricings((prevState) =>
+          prevState.map((x, index) =>
+            index === indexToChange
+              ? {
+                  isLowest: x.isLowest,
+                  pricing: {
+                    ...x.pricing,
+                    pricePerUnit: Number(newPricingPrice),
+                  },
+                }
+              : x
+          )
+        );
+      }
 
-  const onUpdateExistingClicked = () => {
-    setIsLoading(true);
-    setIsFieldsDisabled(true);
-
-    // TODO: implement in apiService
-    alert("Feature not implemented yet.");
+      // Server-side update
+      const response = await apiService.updateArticleShopPricing(
+        selectedShop.id,
+        newPricingPrice
+      );
+      if (!response) alert("Update failed! Please try again later.");
+    }
 
     setIsLoading(false);
     setIsFieldsDisabled(false);
@@ -160,13 +192,13 @@ const ArticleDetails = () => {
   };
 
   const handlePriceChange = (ev: ChangeEvent<HTMLInputElement>) => {
-    if(ev.target.value === "") {
-      setNewPricingPrice('');
+    if (ev.target.value === "") {
+      setNewPricingPrice("");
       return;
     }
     const price = Number(ev.target.value);
     setNewPricingPrice(price);
-  }
+  };
 
   return (
     <Box sx={containerStyle}>
@@ -242,7 +274,7 @@ const ArticleDetails = () => {
             variant="contained"
             size="large"
             endIcon={<EditSharpIcon />}
-            onClick={onUpdateExistingClicked}
+            onClick={() => onUpdatePricing(false)}
           >
             Update existing
           </Button>
@@ -254,7 +286,7 @@ const ArticleDetails = () => {
             size="large"
             endIcon={<AddCircleSharpIcon />}
             color="success"
-            onClick={onAddNewClicked}
+            onClick={() => onUpdatePricing(true)}
           >
             Add new
           </Button>
