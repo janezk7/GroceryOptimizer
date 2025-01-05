@@ -1,7 +1,8 @@
 import { DevConfig } from "./config.development"
 
 export interface IConfig {
-    BASE_API_URL: string
+    BASE_API_URL: string,
+    ALERT_TIMEOUT_MS: number
 }
 
 const getConfig = () : IConfig => {

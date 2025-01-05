@@ -1,4 +1,5 @@
 import {
+  Alert,
   AppBar,
   Box,
   Button,
@@ -6,6 +7,7 @@ import {
   Container,
   Divider,
   FormControl,
+  Grow,
   IconButton,
   InputLabel,
   MenuItem,
@@ -19,12 +21,14 @@ import {
 import BackIcon from "@mui/icons-material/ArrowBack";
 import AddCircleSharpIcon from "@mui/icons-material/AddCircleSharp";
 import EditSharpIcon from "@mui/icons-material/EditSharp";
+import CheckIcon from "@mui/icons-material/Check";
 import { commonStyles } from "../style";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, CSSProperties, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Article, ArticleShopPricing, Shop } from "../models/DbEntities";
 import { apiService } from "../services/apiServiceFactory";
 import ArticleShopPricingItem from "../components/ArticleDetails/ArticleShopPricingItem";
+import { AppConfig } from "../config";
 
 const ArticleDetails = () => {
   const [article, setArticle] = useState<Article>();
@@ -41,6 +45,11 @@ const ArticleDetails = () => {
   const [isPricingForShopExists, setIsPricingForShopExists] =
     useState<boolean>(false);
   const [isFieldsDisabled, setIsFieldsDisabled] = useState<boolean>(true);
+
+  // Feedback
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const [showFailure, setShowFailure] = useState<boolean>(false);
+  const [feedbackMessage, setFeedbackMessage] = useState<string>("");
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -133,12 +142,27 @@ const ArticleDetails = () => {
   };
 
   const onUpdatePricing = async (isNew: boolean) => {
+    console.log("OnUpdatePricing");
+
+    // Frontend validation
+    if(!newPricingPrice) {
+      setShowFailure(true);
+      setFeedbackMessage('Enter price!');
+
+      // setTimeout(() => {
+      //   setShowFailure(false);
+      // }, AppConfig.ALERT_TIMEOUT_MS)
+      return;
+    }
+
+    // Set states
     setIsLoading(true);
     setIsFieldsDisabled(true);
+    setShowFailure(false);
+    setShowSuccess(false);
 
     const selectedShop = shops?.find((x) => x.name === newPricingSelectedShop);
-    if (article && selectedShop && newPricingPrice) {
-
+    if (article && selectedShop) {
       // Responsive client-side update
       if (isNew) {
         setPricings((prevState) => [
@@ -178,7 +202,18 @@ const ArticleDetails = () => {
         selectedShop.id,
         newPricingPrice
       );
-      if (!response) alert("Update failed! Please try again later.");
+      console.log(response);
+      if (response.ok) {
+        setShowSuccess(true);
+      } else {
+        setShowFailure(true);
+        setFeedbackMessage(response.originalError.message);
+      }
+
+      setTimeout(() => {
+        setShowSuccess(false);
+        setShowFailure(false);
+      }, AppConfig.ALERT_TIMEOUT_MS);
     }
 
     setIsLoading(false);
@@ -290,6 +325,19 @@ const ArticleDetails = () => {
           >
             Add new
           </Button>
+        )}
+        {showSuccess && (
+          <Grow in={showSuccess}>
+            <Alert icon={<CheckIcon fontSize="inherit" />} severity="success">
+              Changes saved.
+            </Alert>
+          </Grow>
+        )}
+
+        {showFailure && (
+          <Grow in={showFailure}>
+            <Alert severity="warning">{feedbackMessage}</Alert>
+          </Grow>
         )}
       </Container>
     </Box>

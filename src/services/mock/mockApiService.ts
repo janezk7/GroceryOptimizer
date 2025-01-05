@@ -1,8 +1,34 @@
+import { ApiResponse } from "apisauce";
 import { Article, ArticleShopPricing, Shop } from "../../models/DbEntities";
 import { IApiService } from "../apiService";
-import { getMockArticles, getMockArticleShopPricings, getMockShops } from "./mockData";
+import {
+  getMockArticles,
+  getMockArticleShopPricings,
+  getMockShops,
+} from "./mockData";
 
-const fetchWaitTIme = 1000;
+const fetchWaitTIme = 500;
+
+const mockOriginalError = {
+  config: {},
+  isAxiosError: false,
+  name: "",
+  message: "[MOCK] Operation failed. Please try again later",
+  toJSON: () => Object,
+};
+
+const mockApiResponseSuccess: ApiResponse<string> = {
+  ok: true,
+  problem: null,
+  originalError: null,
+};
+
+const mockApiResponseFailure: ApiResponse<string> = {
+  ok: false,
+  problem: "SERVER_ERROR",
+  originalError: mockOriginalError,
+  data: "mock data",
+};
 
 export class MockApiService implements IApiService {
   async fetchArticleDetails(articleId: number): Promise<Article> {
@@ -25,7 +51,11 @@ export class MockApiService implements IApiService {
   async updateArticleShopPricing(
     shopId: number,
     pricePerUnit: number
-  ): Promise<boolean> { 
-    return true;
+  ): Promise<ApiResponse<string>> {
+    console.log("Updating pricing");
+    await new Promise((resolve) => setTimeout(resolve, fetchWaitTIme));
+    const response = mockApiResponseSuccess;
+    // const response = mockApiResponseFailure;
+    return response;
   }
 }

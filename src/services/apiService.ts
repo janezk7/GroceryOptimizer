@@ -10,7 +10,7 @@ export interface IApiService {
   updateArticleShopPricing(
     shopId: number,
     pricePerUnit: number
-  ): Promise<boolean>;
+  ): Promise<ApiResponse<string>>;
 }
 
 export class ApiService implements IApiService {
@@ -90,13 +90,13 @@ export class ApiService implements IApiService {
   async updateArticleShopPricing(
     shopId: number,
     pricePerUnit: number
-  ): Promise<boolean> {
-    const response = await this.api.post("/UpdateArticleShopPricing", {
+  ): Promise<ApiResponse<string>> {
+    const response = await this.api.post<string>("/UpdateArticleShopPricing", {
       shopId,
       pricePerUnit,
     });
 
     console.log("Response:", response);
-    return response.ok;
+    return response;
   }
 }
