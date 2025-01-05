@@ -3,17 +3,26 @@ import {
   Box,
   Button,
   CircularProgress,
+  Container,
+  Divider,
+  FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   SxProps,
+  TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
 import BackIcon from "@mui/icons-material/ArrowBack";
-import AddCircleSharpIcon from '@mui/icons-material/AddCircleSharp';
+import AddCircleSharpIcon from "@mui/icons-material/AddCircleSharp";
+import EditSharpIcon from "@mui/icons-material/EditSharp";
 import { commonStyles } from "../style";
-import { CSSProperties, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Article, ArticleShopPricing } from "../models/DbEntities";
+import { Article, ArticleShopPricing, Shop } from "../models/DbEntities";
 import { apiService } from "../services/apiServiceFactory";
 import ArticleShopPricingItem from "../components/ArticleDetails/ArticleShopPricingItem";
 
@@ -21,19 +30,25 @@ const ArticleDetails = () => {
   const [article, setArticle] = useState<Article>();
   const [pricings, setPricings] =
     useState<{ pricing: ArticleShopPricing; isLowest: boolean }[]>();
+  const [shops, setShops] = useState<Shop[]>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigate();
+  // New/Update pricing
+  const [newPricingSelectedShop, setNewPricingSelectedShop] =
+    useState<string>("Shop");
+  const [newPricingPrice, setNewPricingPrice] = useState<number | ''>('');
+  const [isPricingForShopExists, setIsPricingForShopExists] =
+    useState<boolean>(false);
+  const [isFieldsDisabled, setIsFieldsDisabled] = useState<boolean>(true);
 
+  const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
 
   // Get article data
   useEffect(() => {
-    console.log("Getting article data");
     const articleLocationData: Article = location.state || {};
     if (articleLocationData) {
-      console.log("Setting from location data: ", articleLocationData);
       setArticle(articleLocationData);
     } else {
       const fetchArticleData = async () => {
@@ -81,8 +96,80 @@ const ArticleDetails = () => {
     fetchPricings();
   }, [article]);
 
+  // Get shops
+  useEffect(() => {
+    const fetchShopsData = async () => {
+      setIsLoading(true);
+      const result = await apiService.fetchShops();
+      setIsLoading(false);
+      if (!result) {
+        alert("Error fetching article details");
+        return;
+      }
+      setShops(result);
+      const defaultShop = result[0];
+      setNewPricingSelectedShop(defaultShop.name);
+      checkExistingPricingState(defaultShop.name);
+      setIsFieldsDisabled(false);
+    };
+    fetchShopsData();
+  }, [pricings]);
+
+  const checkExistingPricingState = (selectedShopName: string) => {
+    if (!pricings) {
+      console.warn("No pricings loaded. can't check for existing shop.");
+      setIsPricingForShopExists(false);
+      return;
+    }
+    const existingIndex = pricings?.findIndex(
+      (x) => x.pricing.shopName == selectedShopName
+    );
+    if (existingIndex !== -1) {
+      setIsPricingForShopExists(true);
+      return;
+    }
+    setIsPricingForShopExists(false);
+  };
+
+  const onAddNewClicked = () => {
+    setIsLoading(true);
+    setIsFieldsDisabled(true);
+
+    // TODO: Implement in apiService
+    alert("Feature not implemented yet.");
+
+    setIsLoading(false);
+    setIsFieldsDisabled(false);
+  };
+
+  const onUpdateExistingClicked = () => {
+    setIsLoading(true);
+    setIsFieldsDisabled(true);
+
+    // TODO: implement in apiService
+    alert("Feature not implemented yet.");
+
+    setIsLoading(false);
+    setIsFieldsDisabled(false);
+  };
+
+  const handleShopChange = (ev: SelectChangeEvent<string>) => {
+    const selectedShop = ev.target.value as string;
+    setNewPricingSelectedShop(selectedShop);
+    checkExistingPricingState(selectedShop);
+  };
+
+  const handlePriceChange = (ev: ChangeEvent<HTMLInputElement>) => {
+    if(ev.target.value === "") {
+      setNewPricingPrice('');
+      return;
+    }
+    const price = Number(ev.target.value);
+    setNewPricingPrice(price);
+  }
+
   return (
-    <Box>
+    <Box sx={containerStyle}>
       <AppBar position="static" color="transparent" style={{ padding: -20 }}>
         <Toolbar>
           <IconButton
@@ -96,15 +183,14 @@ const ArticleDetails = () => {
             <BackIcon sx={{ mr: 2 }} />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Banana
+            {article?.name}
           </Typography>
           {isLoading && <CircularProgress />}
         </Toolbar>
       </AppBar>
-      <Box sx={commonStyles.contentContainer}>
+      <Container sx={commonStyles.contentContainer}>
         {article && (
           <Box sx={articleContainer}>
-            {/* <Typography>Article: {article.name}</Typography> */}
             <Typography>Added by: {article.addedByUserName}</Typography>
             <Typography>Note: {article.note}</Typography>
           </Box>
@@ -121,26 +207,79 @@ const ArticleDetails = () => {
               />
             ))}
         </Box>
-        <Button variant="contained" endIcon={<AddCircleSharpIcon />}>
-          New Pricing
-        </Button>
-      </Box>
+      </Container>
+      <Divider>New/Update Pricing</Divider>
+      <Container sx={{ ...commonStyles.contentContainer, gap: "15px" }}>
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Shop</InputLabel>
+          <Select
+            disabled={isFieldsDisabled}
+            labelId="demo-simple-select-label1"
+            id="demo-simple-select1"
+            value={newPricingSelectedShop}
+            label="Shop"
+            onChange={handleShopChange}
+          >
+            {shops &&
+              shops.map((shop, index) => (
+                <MenuItem key={`shopId${index}`} value={shop.name}>
+                  {shop.name}
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
+        <TextField
+          disabled={isFieldsDisabled}
+          label={"Price"}
+          value={newPricingPrice}
+          type="number"
+          onChange={handlePriceChange}
+        />
+
+        {isPricingForShopExists && (
+          <Button
+            disabled={isFieldsDisabled}
+            variant="contained"
+            size="large"
+            endIcon={<EditSharpIcon />}
+            onClick={onUpdateExistingClicked}
+          >
+            Update existing
+          </Button>
+        )}
+        {!isPricingForShopExists && (
+          <Button
+            disabled={isFieldsDisabled}
+            variant="contained"
+            size="large"
+            endIcon={<AddCircleSharpIcon />}
+            color="success"
+            onClick={onAddNewClicked}
+          >
+            Add new
+          </Button>
+        )}
+      </Container>
     </Box>
   );
 };
 
 export default ArticleDetails;
 
+const containerStyle: SxProps = {
+  flex: 1,
+};
+
 const articleContainer: SxProps = {
   display: "flex",
   alignItems: "start",
   flexDirection: "column",
-  pb: "15px"
+  pb: "15px",
 };
 
 const pricingsContainer: SxProps = {
   display: "flex",
   alignItems: "center",
   flexDirection: "column",
-  pb: "15px"
+  pb: "15px",
 };

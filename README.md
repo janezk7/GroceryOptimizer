@@ -38,8 +38,9 @@
     - Profile
         - Settings
         - Logout
-- UpdatePricingScreen
-- EditProductEntryScreen
+- ProductDetailsScreen
+    - Add/Update pricings
+    - Update product
 
 **Features:**
 - inspired by `Bring`
@@ -50,23 +51,19 @@
 - "+" hero button everywhere to add new pricing 
     - Opens `New product entry screen`
 - "Click on item" to update
-    - Opens `Update pricing screen`
+    - Opens `Product Details screen`
 
-**Update pricing screen**:
+**Product Details screen**:
 - Screen with product info and different pricings for shops
     - Highlighted cheapest
-- Click on pricings for shop to update pricing for that shop
-    - Opens `Edit product entry screen`.
-- Add new shop entry 
-    - Opens `New product entry screen`. Grayed product name/unit
+- Section to update/add new pricing
+    - Select shop (dropdown) and enter price
+    - Automatically toggles button to add new or update (if selected shop already has pricing)
 
-**New/Edit product entry screen**:
+**New product entry screen**:
 - Enter name
-- Select shop (lidl, hofer, spar, mercator, tus)
-    - Preselected and disabled for Edit
-- Enter price per unit
 - Select unit (g, kg, l, kos)
-- `Dodaj pricing` button
+- `Add new product` button
 
 ### Ceh tab
 
