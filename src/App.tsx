@@ -10,6 +10,7 @@ import {
 import ItemsScreen from "./screens/(tabs)/ItemsScreen";
 import ShopScreen from "./screens/(tabs)/ShopScreen";
 import ProfileScreen from "./screens/(tabs)/ProfileScreen";
+import ArticleCreate from "./screens/ArticleCreate";
 import ArticleDetails from "./screens/ArticleDetails";
 
 import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
@@ -57,6 +58,7 @@ function App() {
           <Route path="/items" Component={ItemsScreen} />
           <Route path="/shop" Component={ShopScreen} />
           <Route path="/profile" Component={ProfileScreen} />
+          <Route path="/articleCreate" Component={ArticleCreate} />
           <Route path="/articleDetails/:id" Component={ArticleDetails} />
         </Routes>
       </div>

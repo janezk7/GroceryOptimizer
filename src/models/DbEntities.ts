@@ -6,12 +6,12 @@ interface User {
 interface Article {
   id: number;
   addedByUserId: number;
-  unitId: number;
+  priceUnitId: number;
+  name: string;
+  note: string | undefined;
 
   addedByUserName: string;
   priceUnitName: string;
-  name: string;
-  note: string | undefined;
 }
 
 interface Shop {
@@ -21,18 +21,21 @@ interface Shop {
 }
 
 interface ArticleShopPricing {
+  id: number,
   articleId: number,
   shopId: number,
-
-  shopName: string,
   pricePerUnit: number,
-  unitName: string
+  shopName: string,
+  priceUnitId: number | undefined,
+  priceUnitName: string
+  priceUnitNameShort: string
+  dateInserted: Date | undefined,
 }
 
-interface Unit {
+interface PriceUnit {
   id: number,
-  name: string,
+  unitName: string,
   shortName: string,
 }
 
-export type { User, Article, Shop, ArticleShopPricing, Unit };
+export type { User, Article, Shop, ArticleShopPricing, PriceUnit };

@@ -1,1 +1,1 @@
-import { User, Article, Shop, ArticleShopPricing, Unit } from './DbEntities';
+import { User, Article, Shop, ArticleShopPricing, PriceUnit } from './DbEntities';

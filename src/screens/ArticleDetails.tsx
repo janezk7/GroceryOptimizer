@@ -58,15 +58,14 @@ const ArticleDetails = () => {
   // Get article data
   useEffect(() => {
     const articleLocationData: Article = location.state || {};
-    if (articleLocationData) {
+    const useLocationDataForOptimization = false;
+    if (useLocationDataForOptimization && articleLocationData) {
       setArticle(articleLocationData);
     } else {
       const fetchArticleData = async () => {
-        // console.log("Fetching article");
         setIsLoading(true);
         const result = await apiService.fetchArticleDetails(Number(id));
         setIsLoading(false);
-        // console.log("Done fetching article");
         if (!result) {
           alert("Error fetching article details");
           return;
@@ -79,12 +78,12 @@ const ArticleDetails = () => {
 
   // Get pricings
   useEffect(() => {
+    if(!article)
+      return;
     const fetchPricings = async () => {
-      // console.log("Fetching pricings");
       setIsLoading(true);
       const result = await apiService.fetchArticlePricings(Number(article?.id));
       setIsLoading(false);
-      // console.log("Fetch pricings done");
       if (!result) {
         alert("Error fetching pricings");
         return;
@@ -127,7 +126,6 @@ const ArticleDetails = () => {
 
   const checkExistingPricingState = (selectedShopName: string) => {
     if (!pricings) {
-      console.warn("No pricings loaded. can't check for existing shop.");
       setIsPricingForShopExists(false);
       return;
     }
@@ -145,9 +143,9 @@ const ArticleDetails = () => {
     console.log("OnUpdatePricing");
 
     // Frontend validation
-    if(!newPricingPrice) {
+    if (!newPricingPrice) {
       setShowFailure(true);
-      setFeedbackMessage('Enter price!');
+      setFeedbackMessage("Enter price!");
 
       // setTimeout(() => {
       //   setShowFailure(false);
@@ -170,11 +168,16 @@ const ArticleDetails = () => {
           {
             isLowest: false,
             pricing: {
+              id: -1,
               articleId: article?.id,
               pricePerUnit: Number(newPricingPrice),
               shopId: selectedShop.id,
               shopName: selectedShop.name,
               unitName: article.priceUnitName,
+              priceUnitId: article.priceUnitId,
+              priceUnitName: article.priceUnitName,
+              priceUnitNameShort: article.priceUnitName,
+              dateInserted: new Date(), // Cheating
             },
           },
         ]);
@@ -198,7 +201,8 @@ const ArticleDetails = () => {
       }
 
       // Server-side update
-      const response = await apiService.updateArticleShopPricing(
+      const response = await apiService.addArticleShopPricing(
+        article.id,
         selectedShop.id,
         newPricingPrice
       );
@@ -311,7 +315,7 @@ const ArticleDetails = () => {
             endIcon={<EditSharpIcon />}
             onClick={() => onUpdatePricing(false)}
           >
-            Update existing
+            Update pricing
           </Button>
         )}
         {!isPricingForShopExists && (
@@ -323,7 +327,7 @@ const ArticleDetails = () => {
             color="success"
             onClick={() => onUpdatePricing(true)}
           >
-            Add new
+            Add pricing for new shop
           </Button>
         )}
         {showSuccess && (

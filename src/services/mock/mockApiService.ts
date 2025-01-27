@@ -1,5 +1,5 @@
 import { ApiResponse } from "apisauce";
-import { Article, ArticleShopPricing, Shop } from "../../models/DbEntities";
+import { Article, ArticleShopPricing, PriceUnit, Shop } from "../../models/DbEntities";
 import { IApiService } from "../apiService";
 import {
   getMockArticles,
@@ -31,6 +31,12 @@ const mockApiResponseFailure: ApiResponse<string> = {
 };
 
 export class MockApiService implements IApiService {
+  fetchPriceUnits(): Promise<PriceUnit[]> {
+    throw new Error("Method not implemented.");
+  }
+  createArticle(name: string, priceUnitId: number, note: string): Promise<ApiResponse<number>> {
+    throw new Error("Method not implemented.");
+  }
   async fetchArticleDetails(articleId: number): Promise<Article> {
     await new Promise((resolve) => setTimeout(resolve, fetchWaitTIme));
     return getMockArticles(1)[0];
@@ -48,7 +54,20 @@ export class MockApiService implements IApiService {
     return getMockArticles(20);
   }
 
+  async addArticleShopPricing(
+    articleId: number,
+    shopId: number,
+    pricePerUnit: number
+  ): Promise<ApiResponse<string>> {
+    console.log("Adding pricing");
+    await new Promise((resolve) => setTimeout(resolve, fetchWaitTIme));
+    const response = mockApiResponseSuccess;
+    // const response = mockApiResponseFailure;
+    return response;
+  }
+
   async updateArticleShopPricing(
+    articleId: number,
     shopId: number,
     pricePerUnit: number
   ): Promise<ApiResponse<string>> {

@@ -6,11 +6,14 @@ import { Article } from "../../models/DbEntities";
 import { apiService } from "../../services/apiServiceFactory";
 import ArticleCard from "../../components/ArticleCard";
 import { commonStyles } from "../../style";
+import { useNavigate } from "react-router-dom";
 
 export default function ItemsScreen() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [articles, setArticles] = useState<Article[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log("Getting articles...");
@@ -23,6 +26,7 @@ export default function ItemsScreen() {
         console.log("Got data!", data);
       } catch (err: unknown) {
         if (err instanceof Error) {
+          setIsLoading(false);
           setError(err.message); // Set error message
         } else {
           setError("An unexpected error occurred"); // Fallback for unknown errors
@@ -53,7 +57,7 @@ export default function ItemsScreen() {
         style={fabStyle}
         color="primary"
         aria-label="add"
-        onClick={() => alert("Clicked")}
+        onClick={() => navigate("/articleCreate")}
       >
         <AddIcon />
       </Fab>

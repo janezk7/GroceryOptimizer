@@ -1,5 +1,5 @@
 import { create, ApiResponse, ApisauceInstance } from "apisauce";
-import { Article, ArticleShopPricing, Shop } from "../models/DbEntities";
+import { Article, ArticleShopPricing, PriceUnit, Shop } from "../models/DbEntities";
 import { AppConfig } from "../config";
 
 export interface IApiService {
@@ -7,7 +7,15 @@ export interface IApiService {
   fetchArticleDetails(articleId: number): Promise<Article>;
   fetchArticlePricings(articleId: number): Promise<ArticleShopPricing[]>;
   fetchShops(): Promise<Shop[]>;
+  fetchPriceUnits(): Promise<PriceUnit[]>;
+  createArticle(name: string, priceUnitId: number, note: string): Promise<ApiResponse<number>>;
+  addArticleShopPricing(
+    articleId: number,
+    shopId: number,
+    pricePerUnit: number
+  ): Promise<ApiResponse<string>>;
   updateArticleShopPricing(
+    articleId: number,
     shopId: number,
     pricePerUnit: number
   ): Promise<ApiResponse<string>>;
@@ -35,7 +43,7 @@ export class ApiService implements IApiService {
   }
 
   async fetchArticles(): Promise<Article[]> {
-    const response = await this.api.get<Article[]>("/Article");
+    const response = await this.api.get<Article[]>("/Article/Articles");
     console.log("Response:", response);
 
     if (response.ok && response.data) {
@@ -46,7 +54,7 @@ export class ApiService implements IApiService {
   }
 
   async fetchArticleDetails(articleId: number): Promise<Article> {
-    const response = await this.api.get<Article>("/ArticleDetails", {
+    const response = await this.api.get<Article>("/Article/ArticleDetails", {
       articleId: articleId,
     });
 
@@ -60,7 +68,7 @@ export class ApiService implements IApiService {
 
   async fetchArticlePricings(articleId: number): Promise<ArticleShopPricing[]> {
     const response = await this.api.get<ArticleShopPricing[]>(
-      "/ArticlePricings",
+      "/Article/LatestArticlePricing",
       {
         articleId: articleId,
       }
@@ -77,7 +85,7 @@ export class ApiService implements IApiService {
   }
 
   async fetchShops(): Promise<Shop[]> {
-    const response = await this.api.get<Shop[]>("/shops");
+    const response = await this.api.get<Shop[]>("/Shop/Shops");
 
     console.log("Response:", response);
     if (response.ok && response.data) {
@@ -87,14 +95,62 @@ export class ApiService implements IApiService {
     }
   }
 
-  async updateArticleShopPricing(
+  async fetchPriceUnits(): Promise<PriceUnit[]> {
+    const response = await this.api.get<PriceUnit[]>("/Article/PriceUnits");
+    console.log("Response:", response);
+    if (response.ok && response.data) {
+      return response.data;
+    } else {
+      throw new Error(response.problem || "Failed to fetch price units");
+    }
+  }
+
+
+  async createArticle(name: string, priceUnitId: number, note: string): Promise<ApiResponse<number>> {
+    const response = await this.api.post<number>(
+      "/Article/Create",
+      {
+        name,
+        priceUnitId,
+        note,
+      }
+    );
+
+    console.log("Response:", response);
+    return response;
+  }
+
+  async addArticleShopPricing(
+    articleId: number,
     shopId: number,
     pricePerUnit: number
   ): Promise<ApiResponse<string>> {
-    const response = await this.api.post<string>("/UpdateArticleShopPricing", {
-      shopId,
-      pricePerUnit,
-    });
+    const response = await this.api.post<string>(
+      "/Article/AddArticleShopPricing",
+      {
+        articleId,
+        shopId,
+        pricePerUnit,
+      }
+    );
+
+    console.log("Response:", response);
+    return response;
+  }
+
+  async updateArticleShopPricing(
+    articleId: number,
+    shopId: number,
+    pricePerUnit: number
+  ): Promise<ApiResponse<string>> {
+    const response = await this.api.post<string>(
+      "/Article/UpdateArticleShopPricing",
+      {
+        articleId,
+        shopId,
+        pricePerUnit,
+      }
+    );
 
     console.log("Response:", response);
     return response;

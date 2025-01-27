@@ -2,7 +2,7 @@ import {
   Article,
   ArticleShopPricing,
   Shop,
-  Unit,
+  PriceUnit,
 } from "../../models/DbEntities";
 import { getRandomNumberTwoFixed } from "../../util/utilMethods";
 
@@ -15,7 +15,7 @@ function getMockArticles(n: number) {
       addedByUserName: "Janez",
       name: "Mock Article " + (i + 1),
       note: "This is a note for Mock Article " + (i + 1),
-      unitId: 1,
+      priceUnitId: 1,
       priceUnitName: 'kg'
     });
   }
@@ -51,36 +51,40 @@ function getMockArticleShopPricings() {
   let pricings: ArticleShopPricing[] = [];
   for (let i = 0; i < shops.length - 1; i++) { // Note: -1 is so we can test adding non-existing shop pricing
     pricings.push({
+      id: 12,
       articleId: 99,
       shopId: shops[i].id,
       shopName: shops[i].name,
       pricePerUnit: getRandomNumberTwoFixed(0.7, 2.1),
-      unitName: "kg",
+      priceUnitName: "kilogram",
+      priceUnitNameShort: "kg",
+      dateInserted: new Date(),
+      priceUnitId: 99,
     });
   }
   return pricings;
 }
 
 function getMockUnits() {
-  let units: Unit[] = [
+  let units: PriceUnit[] = [
     {
       id: 0,
-      name: "gram",
+      unitName: "gram",
       shortName: "g",
     },
     {
       id: 1,
-      name: "kilogram",
+      unitName: "kilogram",
       shortName: "kg",
     },
     {
       id: 2,
-      name: "liter",
+      unitName: "liter",
       shortName: "l",
     },
     {
       id: 3,
-      name: "kos",
+      unitName: "kos",
       shortName: "kos",
     },
   ];

@@ -14,7 +14,7 @@ const ArticleShopPricingItem: React.FC<ArticleShopPricingItemProps> = (props) =>
     <Box sx={container}>
       {props.isLowestPrice && <DoneIcon color={'success'} />}
       <Typography
-      >{`${pricing.shopName}: ${pricing.pricePerUnit}/${pricing.unitName}`}</Typography>
+      >{`${pricing.shopName}: ${pricing.pricePerUnit}/${pricing.priceUnitNameShort}`}</Typography>
     </Box>
   );
 };
