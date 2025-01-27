@@ -56,7 +56,7 @@
 **Product Details screen**:
 - Screen with product info and different pricings for shops
     - Highlighted cheapest
-- Section to update/add new pricing
+- Section to update/add new shop pricing for article
     - Select shop (dropdown) and enter price
     - Automatically toggles button to add new or update (if selected shop already has pricing)
 
