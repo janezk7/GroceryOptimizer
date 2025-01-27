@@ -1,6 +1,8 @@
 import { create, ApiResponse, ApisauceInstance } from "apisauce";
 import { Article, ArticleShopPricing, PriceUnit, Shop } from "../models/DbEntities";
 import { AppConfig } from "../config";
+import { TOKEN_LOCALSTORAGE_KEY } from "./authService";
+import useAuthStore from "../store/useAuthStore";
 
 export interface IApiService {
   fetchArticles(): Promise<Article[]>;
@@ -34,7 +36,7 @@ export class ApiService implements IApiService {
     });
 
     this.api.addRequestTransform((request) => {
-      const token = localStorage.getItem("token"); // Replace with your token retrieval method
+      const token = useAuthStore.getState().getToken();
       if (token) {
         if (!request.headers) request.headers = {};
         request.headers.Authorization = `Bearer ${token}`;

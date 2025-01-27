@@ -27,13 +27,8 @@ const useCreateArticle = () => {
         selectedUnitId,
         note
       );
-
-      setIsLoading(false);
-
-      if (!response.ok) {
-        alert("Error creating new article: " + response.problem);
-        return;
-      }
+      if (!response.ok) 
+        throw new Error(response.problem);
 
       setShowSuccess(true);
       navigate(`/articledetails/${response.data}`);
