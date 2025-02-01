@@ -1,1 +1,1 @@
-export { commonStyles } from './commonStyles';
+export { $commonStyles as commonStyles } from './commonStyles';
