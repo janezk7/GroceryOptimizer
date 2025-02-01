@@ -27,8 +27,9 @@ const useCreateArticle = () => {
         selectedUnitId,
         note
       );
-      if (!response.ok) 
-        throw new Error(response.problem);
+      if (!response.ok) {
+        throw new Error(response.data ?? response.problem);
+      }
 
       setShowSuccess(true);
       navigate(`/articledetails/${response.data}`);

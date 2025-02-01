@@ -10,7 +10,7 @@ export interface IApiService {
   fetchArticlePricings(articleId: number): Promise<ArticleShopPricing[]>;
   fetchShops(): Promise<Shop[]>;
   fetchPriceUnits(): Promise<PriceUnit[]>;
-  createArticle(name: string, priceUnitId: number, note: string): Promise<ApiResponse<number>>;
+  createArticle(name: string, priceUnitId: number, note: string): Promise<ApiResponse<number, string>>;
   addArticleShopPricing(
     articleId: number,
     shopId: number,
@@ -108,8 +108,8 @@ export class ApiService implements IApiService {
   }
 
 
-  async createArticle(name: string, priceUnitId: number, note: string): Promise<ApiResponse<number>> {
-    const response = await this.api.post<number>(
+  async createArticle(name: string, priceUnitId: number, note: string): Promise<ApiResponse<number, string>> {
+    const response = await this.api.post<number, string>(
       "/Article/Create",
       {
         name,

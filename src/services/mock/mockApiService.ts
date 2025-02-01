@@ -34,7 +34,7 @@ export class MockApiService implements IApiService {
   fetchPriceUnits(): Promise<PriceUnit[]> {
     throw new Error("Method not implemented.");
   }
-  createArticle(name: string, priceUnitId: number, note: string): Promise<ApiResponse<number>> {
+  createArticle(name: string, priceUnitId: number, note: string): Promise<ApiResponse<number, string>> {
     throw new Error("Method not implemented.");
   }
   async fetchArticleDetails(articleId: number): Promise<Article> {
