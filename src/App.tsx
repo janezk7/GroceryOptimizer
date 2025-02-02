@@ -1,9 +1,5 @@
 import "./App.css";
-import {
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import ItemsScreen from "./screens/(tabs)/ItemsScreen";
 import ShopScreen from "./screens/(tabs)/ShopScreen";
 import ProfileScreen from "./screens/(tabs)/ProfileScreen";
@@ -11,6 +7,7 @@ import ArticleCreate from "./screens/ArticleCreate";
 import ArticleDetails from "./screens/ArticleDetails";
 
 import BakeryDiningIcon from "@mui/icons-material/BakeryDining";
+import FastfoodIcon from '@mui/icons-material/Fastfood';
 import FaceIcon from "@mui/icons-material/Face";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
@@ -74,7 +71,8 @@ function App() {
           )}
           {isAuthenticated && (
             <>
-              <Route path="/" Component={ItemsScreen} /> {/* TODO: simply redirect to items path */}
+              <Route path="/" Component={ItemsScreen} />{" "}
+              {/* TODO: simply redirect to items path */}
               <Route path="/items" Component={ItemsScreen} />
               <Route path="/shop" Component={ShopScreen} />
               <Route path="/profile" Component={ProfileScreen} />
@@ -107,7 +105,7 @@ function App() {
           >
             <BottomNavigationAction
               label="Artikli"
-              icon={<BakeryDiningIcon />}
+              icon={<FastfoodIcon />}
             />
             <BottomNavigationAction label="Ceh" icon={<ShoppingCartIcon />} />
             <BottomNavigationAction label="Profil" icon={<FaceIcon />} />

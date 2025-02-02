@@ -3,8 +3,8 @@ import { MockAuthService } from "./mock/mockAuthService";
 
 export class AuthServiceFactory {
   static createAuthService(): IAuthService {
-    // const authService = new AuthService;
-    const authService = new MockAuthService;
+    const authService = new AuthService;
+    // const authService = new MockAuthService;
     return authService;
   }
 }

@@ -25,9 +25,9 @@ const ArticleCard = ({ data }: ArticleCardProps) => {
             <Typography sx={[$title, $debugStyles.placeholder]} variant="subtitle1">
               {data.name}
             </Typography>
-            <Box sx={[$icon, $debugStyles.placeholder]}>
+            {/* <Box sx={[$icon, $debugStyles.placeholder]}>
               <Burger fontSize="medium" />
-            </Box>
+            </Box> */}
             <Typography sx={[$subText, $debugStyles.placeholder]} variant="body1">
               {data.note}
             </Typography>
@@ -60,7 +60,8 @@ const $wrapper: CSSProperties = {
   flex: 1,
   height: "100%",
   flexDirection: "column",
-  justifyContent: "space-between",
+  // justifyContent: "space-between",
+  justifyContent: "space-around",
   alignContent: "stretch",
   gap: "4px",
   padding: "10px",
