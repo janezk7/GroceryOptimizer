@@ -1,4 +1,5 @@
 import { DevConfig } from "./config.development"
+import { ProdConfig } from "./config.production";
 
 export interface IConfig {
     BASE_API_URL: string,
@@ -6,7 +7,7 @@ export interface IConfig {
 }
 
 const getConfig = () : IConfig => {
-    const currentConfig = DevConfig;
+    const currentConfig = ProdConfig;
     return currentConfig;
 }
 
