@@ -125,3 +125,23 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
         - `WEBSITE_WEBDEPLOY_USE_SCM=false`
 - Db calls don't work when deployed on azure
     - ➡️ check `Settings -> Networking -> Allow public access from any Azure service within Azure to this server`
+- Github CI/CD Action for Static Web App fails on push with error "The engine "node" is incompatible with this module. Expected version ">=20.0.0". Got "18.20.5"
+    1. Added `.nvmrc` with `v20.18.1` -> Didn't work ❌
+    2. Added a node version step to azure CI CD .yaml -> Didn't work ❌
+    ```yaml
+    - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.18.1' 
+    ```
+    3. Added engines node version in `package.json` -> Worked ✅
+    ```json
+    "engines": {
+        "node": ">=20.18.1"
+    },
+    ```
+- Github CI/CD Action for Static Web App fails on push with error "Treating warnings as errors because process.env.CI = true." and error "Oryx has failed to build the solution."
+    - Set `CI = false` in build script
+```json
+"build": "CI=false && react-scripts build",
+```
