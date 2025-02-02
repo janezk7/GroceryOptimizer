@@ -1,6 +1,7 @@
 import { Box, CircularProgress, Fab, Typography } from "@mui/material";
 import logo from "../logo.svg";
 import AddIcon from "@mui/icons-material/Add";
+import PostAddIcon from '@mui/icons-material/PostAdd';
 import { CSSProperties, useEffect, useState } from "react";
 import { Article } from "../../models/DbEntities";
 import { apiService } from "../../services/apiServiceFactory";
@@ -59,7 +60,7 @@ export default function ItemsScreen() {
         aria-label="add"
         onClick={() => navigate("/articleCreate")}
       >
-        <AddIcon />
+        <PostAddIcon />
       </Fab>
     </Box>
   );
