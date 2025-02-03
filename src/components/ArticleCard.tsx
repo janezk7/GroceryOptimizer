@@ -39,8 +39,8 @@ const ArticleCard = ({ data }: ArticleCardProps) => {
 };
 
 const $outerButton: CSSProperties = {
-  height: 120,
-  width: 120,
+  height: 110,
+  width: 110,
 };
 
 const $card: CSSProperties = {
