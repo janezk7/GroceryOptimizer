@@ -1,5 +1,10 @@
 import { create, ApiResponse, ApisauceInstance } from "apisauce";
-import { Article, ArticleShopPricing, PriceUnit, Shop } from "../models/DbEntities";
+import {
+  Article,
+  ArticleStorePricing,
+  PriceUnit,
+  ShoppingStore,
+} from "../models/DbEntities";
 import { AppConfig } from "../config";
 import { TOKEN_LOCALSTORAGE_KEY } from "./authService";
 import useAuthStore from "../store/useAuthStore";
@@ -7,10 +12,17 @@ import useAuthStore from "../store/useAuthStore";
 export interface IApiService {
   fetchArticles(): Promise<Article[]>;
   fetchArticleDetails(articleId: number): Promise<Article>;
-  fetchArticlePricings(articleId: number): Promise<ArticleShopPricing[]>;
-  fetchShops(): Promise<Shop[]>;
+  fetchArticlePricings(
+    articleId: number
+  ): Promise<ArticleStorePricing[]>;
+  fetchShoppingStores(): Promise<ShoppingStore[]>;
   fetchPriceUnits(): Promise<PriceUnit[]>;
-  createArticle(name: string, priceUnitId: number, note: string): Promise<ApiResponse<number, string>>;
+  createArticle(
+    name: string,
+    priceUnitId: number,
+    note: string
+  ): Promise<ApiResponse<number, string>>;
+
   addArticleShopPricing(
     articleId: number,
     shopId: number,
@@ -42,6 +54,16 @@ export class ApiService implements IApiService {
         request.headers.Authorization = `Bearer ${token}`;
       }
     });
+
+    // ✅ Bind all methods to preserve `this` when passing function in other places (like react-query)
+    this.fetchArticles = this.fetchArticles.bind(this);
+    this.fetchArticleDetails = this.fetchArticleDetails.bind(this);
+    this.fetchArticlePricings = this.fetchArticlePricings.bind(this);
+    this.fetchShoppingStores = this.fetchShoppingStores.bind(this);
+    this.fetchPriceUnits = this.fetchPriceUnits.bind(this);
+    this.createArticle = this.createArticle.bind(this);
+    this.addArticleShopPricing = this.addArticleShopPricing.bind(this);
+    this.updateArticleShopPricing = this.addArticleShopPricing.bind(this);
   }
 
   async fetchArticles(): Promise<Article[]> {
@@ -68,8 +90,10 @@ export class ApiService implements IApiService {
     }
   }
 
-  async fetchArticlePricings(articleId: number): Promise<ArticleShopPricing[]> {
-    const response = await this.api.get<ArticleShopPricing[]>(
+  async fetchArticlePricings(
+    articleId: number
+  ): Promise<ArticleStorePricing[]> {
+    const response = await this.api.get<ArticleStorePricing[]>(
       "/Article/LatestArticlePricing",
       {
         articleId: articleId,
@@ -86,10 +110,9 @@ export class ApiService implements IApiService {
     }
   }
 
-  async fetchShops(): Promise<Shop[]> {
-    const response = await this.api.get<Shop[]>("/Shop/Shops");
+  async fetchShoppingStores(): Promise<ShoppingStore[]> {
+    const response = await this.api.get<ShoppingStore[]>("/Shop/Shops");
 
-    console.log("Response:", response);
     if (response.ok && response.data) {
       return response.data;
     } else {
@@ -107,16 +130,16 @@ export class ApiService implements IApiService {
     }
   }
 
-
-  async createArticle(name: string, priceUnitId: number, note: string): Promise<ApiResponse<number, string>> {
-    const response = await this.api.post<number, string>(
-      "/Article/Create",
-      {
-        name,
-        priceUnitId,
-        note,
-      }
-    );
+  async createArticle(
+    name: string,
+    priceUnitId: number,
+    note: string
+  ): Promise<ApiResponse<number, string>> {
+    const response = await this.api.post<number, string>("/Article/Create", {
+      name,
+      priceUnitId,
+      note,
+    });
 
     console.log("Response:", response);
     return response;

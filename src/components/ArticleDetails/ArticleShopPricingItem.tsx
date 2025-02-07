@@ -1,10 +1,10 @@
 import { Box, Icon, SxProps, Typography } from "@mui/material";
-import { ArticleShopPricing } from "../../models/DbEntities";
+import { ArticleStorePricing } from "../../models/DbEntities";
 import DoneIcon from '@mui/icons-material/Done';
 import { CSSProperties } from "react";
 
 interface ArticleShopPricingItemProps {
-  data: ArticleShopPricing;
+  data: ArticleStorePricing;
   isLowestPrice: boolean
 }
 

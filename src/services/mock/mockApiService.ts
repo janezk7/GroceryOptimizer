@@ -1,5 +1,5 @@
 import { ApiResponse } from "apisauce";
-import { Article, ArticleShopPricing, PriceUnit, Shop } from "../../models/DbEntities";
+import { Article, ArticleStorePricing, PriceUnit, ShoppingStore } from "../../models/DbEntities";
 import { IApiService } from "../apiService";
 import {
   getMockArticles,
@@ -41,11 +41,11 @@ export class MockApiService implements IApiService {
     await new Promise((resolve) => setTimeout(resolve, fetchWaitTIme));
     return getMockArticles(1)[0];
   }
-  async fetchArticlePricings(articleId: number): Promise<ArticleShopPricing[]> {
+  async fetchArticlePricings(articleId: number): Promise<ArticleStorePricing[]> {
     await new Promise((resolve) => setTimeout(resolve, fetchWaitTIme));
     return getMockArticleShopPricings();
   }
-  async fetchShops(): Promise<Shop[]> {
+  async fetchShoppingStores(): Promise<ShoppingStore[]> {
     await new Promise((resolve) => setTimeout(resolve, fetchWaitTIme));
     return getMockShops();
   }

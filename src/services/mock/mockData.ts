@@ -1,7 +1,7 @@
 import {
   Article,
-  ArticleShopPricing,
-  Shop,
+  ArticleStorePricing,
+  ShoppingStore,
   PriceUnit,
 } from "../../models/DbEntities";
 import { getRandomNumberTwoFixed } from "../../util/utilMethods";
@@ -24,7 +24,7 @@ function getMockArticles(n: number) {
 }
 
 function getMockShops() {
-  let shops: Shop[] = [
+  let shops: ShoppingStore[] = [
     {
       id: 0,
       name: "spar",
@@ -48,7 +48,7 @@ function getMockShops() {
 
 function getMockArticleShopPricings() {
   let shops = getMockShops();
-  let pricings: ArticleShopPricing[] = [];
+  let pricings: ArticleStorePricing[] = [];
   for (let i = 0; i < shops.length - 1; i++) { // Note: -1 is so we can test adding non-existing shop pricing
     pricings.push({
       id: 12,
