@@ -8,35 +8,17 @@ import { apiService } from "../../services/apiServiceFactory";
 import ArticleCard from "../../components/ArticleCard";
 import { commonStyles } from "../../style";
 import { useNavigate } from "react-router-dom";
+import useFetchArticles from "../../hooks/useFetchArticles";
 
 export default function ItemsScreen() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [error, setError] = useState<string | null>(null);
-
   const navigate = useNavigate();
+  const {isLoading, data: articles, error} = useFetchArticles();
 
   useEffect(() => {
-    console.log("Getting articles...");
-    const getArticles = async () => {
-      try {
-        setIsLoading(true);
-        const data = await apiService.fetchArticles();
-        setArticles(data);
-        setIsLoading(false);
-        console.log("Got data!", data);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setIsLoading(false);
-          setError(err.message); // Set error message
-        } else {
-          setError("An unexpected error occurred"); // Fallback for unknown errors
-        }
-      }
-    };
-
-    getArticles();
-  }, []);
+    if(!error)
+      return;
+    alert(error);
+  }, [error]);
 
   return (
     <Box sx={commonStyles.contentContainer}>

@@ -1,10 +1,11 @@
 import { ApiResponse } from "apisauce";
-import { Article, ArticleShopPricing, PriceUnit, Shop } from "../../models/DbEntities";
+import { Article, ArticleStorePricing, PriceUnit, ShoppingStore } from "../../models/DbEntities";
 import { IApiService } from "../apiService";
 import {
   getMockArticles,
   getMockArticleShopPricings,
   getMockShops,
+  getMockUnits,
 } from "./mockData";
 
 const fetchWaitTIme = 500;
@@ -31,21 +32,23 @@ const mockApiResponseFailure: ApiResponse<string> = {
 };
 
 export class MockApiService implements IApiService {
-  fetchPriceUnits(): Promise<PriceUnit[]> {
-    throw new Error("Method not implemented.");
+  async fetchPriceUnits(): Promise<PriceUnit[]> {
+    await new Promise((resolve) => setTimeout(resolve, fetchWaitTIme));
+    return getMockUnits();
   }
-  createArticle(name: string, priceUnitId: number, note: string): Promise<ApiResponse<number, string>> {
-    throw new Error("Method not implemented.");
+  async createArticle(name: string, priceUnitId: number, note: string): Promise<ApiResponse<number, string>> {
+    await new Promise((resolve) => setTimeout(resolve, fetchWaitTIme));
+    return mockApiResponseSuccess as ApiResponse<number, string>;
   }
   async fetchArticleDetails(articleId: number): Promise<Article> {
     await new Promise((resolve) => setTimeout(resolve, fetchWaitTIme));
     return getMockArticles(1)[0];
   }
-  async fetchArticlePricings(articleId: number): Promise<ArticleShopPricing[]> {
+  async fetchArticlePricings(articleId: number): Promise<ArticleStorePricing[]> {
     await new Promise((resolve) => setTimeout(resolve, fetchWaitTIme));
     return getMockArticleShopPricings();
   }
-  async fetchShops(): Promise<Shop[]> {
+  async fetchShoppingStores(): Promise<ShoppingStore[]> {
     await new Promise((resolve) => setTimeout(resolve, fetchWaitTIme));
     return getMockShops();
   }

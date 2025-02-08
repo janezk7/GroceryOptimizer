@@ -14,13 +14,13 @@ interface Article {
   priceUnitName: string;
 }
 
-interface Shop {
+interface ShoppingStore {
   id: number,
   name: string,
   note?: string | undefined,
 }
 
-interface ArticleShopPricing {
+interface ArticleStorePricing {
   id: number,
   articleId: number,
   shopId: number,
@@ -38,4 +38,4 @@ interface PriceUnit {
   shortName: string,
 }
 
-export type { User, Article, Shop, ArticleShopPricing, PriceUnit };
+export type { User, Article, ShoppingStore, ArticleStorePricing, PriceUnit };

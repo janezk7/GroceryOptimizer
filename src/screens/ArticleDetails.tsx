@@ -23,113 +23,95 @@ import AddCircleSharpIcon from "@mui/icons-material/AddCircleSharp";
 import EditSharpIcon from "@mui/icons-material/EditSharp";
 import CheckIcon from "@mui/icons-material/Check";
 import { commonStyles } from "../style";
-import { ChangeEvent, CSSProperties, useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Article, ArticleShopPricing, Shop } from "../models/DbEntities";
-import { apiService } from "../services/apiServiceFactory";
+import { ChangeEvent, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArticleStorePricing } from "../models/DbEntities";
 import ArticleShopPricingItem from "../components/ArticleDetails/ArticleShopPricingItem";
-import { AppConfig } from "../config";
+import useFetchShoppingStores from "../hooks/useFetchShoppingStores";
+import useFetchArticleDetails from "../hooks/useFetchArticleDetails";
+import useFetchArticlePricings from "../hooks/useFetchArticlePricings";
+import useUpdateArticlePricing from "../hooks/useUpdateArticlePricing";
 
 const ArticleDetails = () => {
-  const [article, setArticle] = useState<Article>();
-  const [pricings, setPricings] = useState<
-    { pricing: ArticleShopPricing; isLowest: boolean }[]
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [pricingsWithInfo, setPricingsWithInfo] = useState<
+    { pricing: ArticleStorePricing; isLowest: boolean }[]
   >([]);
-  const [shops, setShops] = useState<Shop[]>();
-  const [isLoading, setIsLoading] = useState(false);
+
+  // Data fetching
+  const { isLoading, article, error } = useFetchArticleDetails(Number(id));
+  const {
+    data: stores,
+    error: errorStores,
+    isLoading: isLoadingStores,
+  } = useFetchShoppingStores();
+  const {
+    isLoading: isLoadingPricings,
+    data: pricings,
+    error: errorPricings,
+  } = useFetchArticlePricings(Number(id));
 
   // New/Update pricing
+  const {
+    updateArticlePricing,
+    isLoading: isLoadingUpdatePricing,
+    showSuccess,
+    showFailure,
+    feedbackMessage,
+    isFieldsDisabled,
+    setIsFieldsDisabled,
+  } = useUpdateArticlePricing();
   const [newPricingSelectedShop, setNewPricingSelectedShop] =
     useState<string>("Shop");
   const [newPricingPrice, setNewPricingPrice] = useState<number | "">("");
   const [isPricingForShopExists, setIsPricingForShopExists] =
     useState<boolean>(false);
-  const [isFieldsDisabled, setIsFieldsDisabled] = useState<boolean>(true);
 
-  // Feedback
-  const [showSuccess, setShowSuccess] = useState<boolean>(false);
-  const [showFailure, setShowFailure] = useState<boolean>(false);
-  const [feedbackMessage, setFeedbackMessage] = useState<string>("");
-
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { id } = useParams();
-
-  // Get article data
+  // Get pricings with rankInfo
+  // TODO: Get ordered rank, not just best
   useEffect(() => {
-    const articleLocationData: Article = location.state || {};
-    const useLocationDataForOptimization = false;
-    if (useLocationDataForOptimization && articleLocationData) {
-      setArticle(articleLocationData);
-    } else {
-      const fetchArticleData = async () => {
-        setIsLoading(true);
-        const result = await apiService.fetchArticleDetails(Number(id));
-        setIsLoading(false);
-        if (!result) {
-          alert("Error fetching article details");
-          return;
-        }
-        setArticle(result);
-      };
-      fetchArticleData();
-    }
-  }, []);
-
-  // Get pricings
-  useEffect(() => {
-    if(!article)
-      return;
-    const fetchPricings = async () => {
-      setIsLoading(true);
-      const result = await apiService.fetchArticlePricings(Number(article?.id));
-      setIsLoading(false);
-      if (!result) {
-        alert("Error fetching pricings");
-        return;
+    if (!pricings) return;
+    let lowestIndex = 0;
+    let lowestPrice = 9999;
+    pricings.forEach((x, index) => {
+      if (x.pricePerUnit < lowestPrice) {
+        lowestIndex = index;
+        lowestPrice = x.pricePerUnit;
       }
-      let lowestIndex = 0;
-      let lowestPrice = 9999;
-      result.forEach((x, index) => {
-        if (x.pricePerUnit < lowestPrice) {
-          lowestIndex = index;
-          lowestPrice = x.pricePerUnit;
-        }
-      });
-      const pricingsWithLowestIndex = result.map((x, index) => ({
-        pricing: x,
-        isLowest: index === lowestIndex ? true : false,
-      }));
-      setPricings(pricingsWithLowestIndex);
-    };
-    fetchPricings();
-  }, [article]);
-
-  // Get shops
-  useEffect(() => {
-    const fetchShopsData = async () => {
-      setIsLoading(true);
-      const result = await apiService.fetchShops();
-      setIsLoading(false);
-      if (!result) {
-        alert("Error fetching article details");
-        return;
-      }
-      setShops(result);
-      const defaultShop = result[0];
-      setNewPricingSelectedShop(defaultShop.name);
-      checkExistingPricingState(defaultShop.name);
-      setIsFieldsDisabled(false);
-    };
-    fetchShopsData();
+    });
+    const pricingsWithLowestIndex = pricings.map((x, index) => ({
+      pricing: x,
+      isLowest: index === lowestIndex ? true : false,
+    }));
+    setPricingsWithInfo(pricingsWithLowestIndex);
   }, [pricings]);
+
+  // Handle stores result
+  useEffect(() => {
+    if (isLoadingStores) return;
+    if (errorStores) {
+      console.error(errorStores);
+      // alert("Error fetching stores: " + errorStores?.message);
+      return;
+    }
+    if (!stores || stores.length === 0) {
+      alert("No stores in database...");
+      return;
+    }
+
+    const defaultStore = stores[0];
+    setNewPricingSelectedShop(defaultStore.name);
+    checkExistingPricingState(defaultStore.name);
+    setIsFieldsDisabled(false);
+  }, [stores, errorStores]);
 
   const checkExistingPricingState = (selectedShopName: string) => {
     if (!pricings) {
       setIsPricingForShopExists(false);
       return;
     }
-    const existingIndex = pricings?.findIndex(
+    const existingIndex = pricingsWithInfo?.findIndex(
       (x) => x.pricing.shopName == selectedShopName
     );
     if (existingIndex !== -1) {
@@ -137,91 +119,6 @@ const ArticleDetails = () => {
       return;
     }
     setIsPricingForShopExists(false);
-  };
-
-  const onUpdatePricing = async (isNew: boolean) => {
-    console.log("OnUpdatePricing");
-
-    // Frontend validation
-    if (!newPricingPrice) {
-      setShowFailure(true);
-      setFeedbackMessage("Enter price!");
-
-      // setTimeout(() => {
-      //   setShowFailure(false);
-      // }, AppConfig.ALERT_TIMEOUT_MS)
-      return;
-    }
-
-    // Set states
-    setIsLoading(true);
-    setIsFieldsDisabled(true);
-    setShowFailure(false);
-    setShowSuccess(false);
-
-    const selectedShop = shops?.find((x) => x.name === newPricingSelectedShop);
-    if (article && selectedShop) {
-      // Responsive client-side update
-      if (isNew) {
-        setPricings((prevState) => [
-          ...prevState,
-          {
-            isLowest: false,
-            pricing: {
-              id: -1,
-              articleId: article?.id,
-              pricePerUnit: Number(newPricingPrice),
-              shopId: selectedShop.id,
-              shopName: selectedShop.name,
-              unitName: article.priceUnitName,
-              priceUnitId: article.priceUnitId,
-              priceUnitName: article.priceUnitName,
-              priceUnitNameShort: article.priceUnitName,
-              dateInserted: new Date(), // Cheating
-            },
-          },
-        ]);
-      } else {
-        const indexToChange = pricings.findIndex(
-          (x) => x.pricing.shopId === selectedShop.id
-        );
-        setPricings((prevState) =>
-          prevState.map((x, index) =>
-            index === indexToChange
-              ? {
-                  isLowest: x.isLowest,
-                  pricing: {
-                    ...x.pricing,
-                    pricePerUnit: Number(newPricingPrice),
-                  },
-                }
-              : x
-          )
-        );
-      }
-
-      // Server-side update
-      const response = await apiService.addArticleShopPricing(
-        article.id,
-        selectedShop.id,
-        newPricingPrice
-      );
-      console.log(response);
-      if (response.ok) {
-        setShowSuccess(true);
-      } else {
-        setShowFailure(true);
-        setFeedbackMessage(response.originalError.message);
-      }
-
-      setTimeout(() => {
-        setShowSuccess(false);
-        setShowFailure(false);
-      }, AppConfig.ALERT_TIMEOUT_MS);
-    }
-
-    setIsLoading(false);
-    setIsFieldsDisabled(false);
   };
 
   const handleShopChange = (ev: SelectChangeEvent<string>) => {
@@ -269,8 +166,8 @@ const ArticleDetails = () => {
 
         <Typography variant="h6">Pricings:</Typography>
         <Box sx={pricingsContainer}>
-          {pricings &&
-            pricings.map((p, index) => (
+          {pricingsWithInfo &&
+            pricingsWithInfo.map((p, index) => (
               <ArticleShopPricingItem
                 key={index}
                 data={p.pricing}
@@ -291,10 +188,10 @@ const ArticleDetails = () => {
             label="Shop"
             onChange={handleShopChange}
           >
-            {shops &&
-              shops.map((shop, index) => (
-                <MenuItem key={`shopId${index}`} value={shop.name}>
-                  {shop.name}
+            {stores &&
+              stores.map((store, index) => (
+                <MenuItem key={`shopId${index}`} value={store.name}>
+                  {store.name}
                 </MenuItem>
               ))}
           </Select>
@@ -313,7 +210,12 @@ const ArticleDetails = () => {
             variant="contained"
             size="large"
             endIcon={<EditSharpIcon />}
-            onClick={() => onUpdatePricing(false)}
+            onClick={() => {
+              const selectedShop = stores?.find(
+                (x) => x.name === newPricingSelectedShop
+              );
+              updateArticlePricing(false, article, newPricingPrice, selectedShop);
+            }}
           >
             Update pricing
           </Button>
@@ -325,7 +227,12 @@ const ArticleDetails = () => {
             size="large"
             endIcon={<AddCircleSharpIcon />}
             color="success"
-            onClick={() => onUpdatePricing(true)}
+            onClick={() => {
+              const selectedShop = stores?.find(
+                (x) => x.name === newPricingSelectedShop
+              );
+              updateArticlePricing(true, article, newPricingPrice, selectedShop);
+            }}
           >
             Add pricing for new shop
           </Button>

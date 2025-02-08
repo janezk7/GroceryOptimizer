@@ -39,7 +39,7 @@ const ArticleCreate = () => {
     useState<boolean>(false);
   const [feedbackMessageUnitFetch, setFeedbackMessageUnitFetch] =
     useState<string>("");
-  // Custom hooks
+  // Query hooks
   const priceUnits = useFetchPriceUnits();
   const { createArticle, isLoading, showFailure, showSuccess, error } =
     useCreateArticle();
